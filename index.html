@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display and Edit Excel Table</title>
+    <title>Display and Edit Excel Table with Charts</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,13 +33,20 @@
         td[contenteditable="true"] {
             background-color: #f9f9f9;
         }
+        .chart {
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <h1>Dr Ravi Mishra's Calculator</h1>
     <table id="excelTable"></table>
+    <canvas id="chart1" class="chart" width="400" height="200"></canvas>
+    <!-- Add more canvas elements as needed for more charts -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             fetchExcelFile('calculator/Daily checklist challenge.xlsx');
@@ -53,6 +60,7 @@
                     var firstSheet = workbook.Sheets[workbook.SheetNames[1]];
                     var jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
                     displayTable(jsonData);
+                    createCharts(jsonData);
                 })
                 .catch(error => console.error('Error fetching the Excel file:', error));
         }
@@ -76,6 +84,34 @@
                 table.appendChild(rowElement);
             });
         }
+
+        function createCharts(data) {
+            var labels = data[0].slice(1);  // Assume first row is the header
+            var chartData = data.slice(1).map(row => row.slice(1));  // Exclude first column and row
+
+            var ctx = document.getElementById('chart1').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: chartData.map(row => row[0]),  // Assume the first column after the header is the data
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
+
