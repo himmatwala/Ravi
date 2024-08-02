@@ -50,7 +50,7 @@
                 .then(response => response.arrayBuffer())
                 .then(data => {
                     var workbook = XLSX.read(data, { type: 'array' });
-                    var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    var firstSheet = workbook.Sheets[workbook.SheetNames[1]];
                     var jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
                     displayTable(jsonData);
                 })
